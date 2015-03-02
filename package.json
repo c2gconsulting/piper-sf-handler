@@ -1,0 +1,40 @@
+{
+  "name": "piper-sf-handler",
+  "version": "0.1.0",
+  "private": false,
+  "homepage": "https://github.com/c2gconsulting/piper-sf-handler",
+  "description": "Piper handler wrapper for SF API",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/c2gconsulting/piper-sf-handler"
+  },
+  "bugs": {
+    "url": "https://github.com/c2gconsulting/piper-sf-handler/issues"
+  },
+  "keywords": [
+    "piper",
+    "automation",
+    "home",
+    "siri",
+    "wit.ai",
+    "nlp",
+    "speech",
+    "intent",
+    "erp",
+    "sf"
+  ],
+  "dependencies": {
+    "request": "2.42.0",
+    "underscore": "1.7.0"
+  },
+  "devDependencies": {
+    "mocha": "1.21.4",
+    "nock": "0.47.0",
+    "chai": "1.9.1"
+  },
+  "main": "./index.js",
+  "directories": {
+    "test": "test"
+  },
+  "license": "MIT"
+}
