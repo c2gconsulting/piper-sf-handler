@@ -13,11 +13,11 @@
     ...
     ```
     
-    Add node-piper as a dependency in your package.json
+    Add node-sf as a dependency in your package.json
     
     ```json
       "dependencies": {
-        "piper-mgr": "0.1.0"	
+        "sf-mgr" : "0.1.0"	
       },	
     ```
     
@@ -38,18 +38,17 @@
         outmsg = "Connection Failed!";
         console.log( outmsg );
     }
-
-
-    ```
+ ```
 
 4. Start your app
 
 ```bash
 $ node index.js
-Response from Piper for registerClient:
+
+Response from Successfactors for registerClient:
 Connection to Successfactors was successful!
 
-Response from Piper for new connection:
+Response from Successfactors for new connection:
 {
  "status": "Connected",
  "client": {
