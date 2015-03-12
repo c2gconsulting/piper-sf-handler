@@ -78,18 +78,41 @@ The `connect` function is used to connect to the Successfactor instance. It take
 - `password`: Password on Successfactors e.g demo101
 - `callback`: call function that takes http response as its arguments.
 
+```javascript
+var connect = function( clientID , userP , passW , callback){
+      var options = {
+      hostname: hostname,
+      path: encodeURI ( "/odata/v2/User?$format=json&$filter=userId eq '"+userP+"1' & $select=username,userId" ),
+      method: 'GET',
+      auth: userP+"@"+clientID+":"+passW
+
+    };
+    
+    makeHTTPRequest( options , 'connect', callback );
+};
+```
 
 ### setLeaveUser
 
 The `setLeaveUser` function is used to set current user for leave information. It takes 1 argument: 
 - `leaveUser`: UserId for user in Successfactors
 
+```javascript
+var setLeaveUser = function ( user ){
+  leaveUser = user;
+}
+```
 
 ### setLeaveType
 
 The `setLeaveType` function is used to set current timeAccountType to be fetched for the user. It takes 1 argument: 
 - `leaveType`: external code for timeAccountType. It is usually any of this VACATION_CURRENT , SICKNESS_CURRENT , PTO_CURRENT , PTO_AC
 
+```javascript
+var setLeaveType = function( leaveType ){
+  timeAccountType = leaveType;
+}
+```
 
 ### getLeaveQuota
 
@@ -99,6 +122,23 @@ The `getLeaveQuota` function is used to fetch the leave balance for a user and a
 - `password`: Password on Successfactors e.g demo101
 - `callback`: call function that takes http response as its arguments
 
+```javascript
+var getLeaveQuota = function (clientID, userP, passW , callback ) {
+    
+    var options = {
+        hostname: hostname,
+        path: encodeURI ( "/odata/v2/EmpTimeAccountBalance?$format=json&$filter=userId eq '"+getLeaveUser()+
+          "'  and timeAccountType eq '"+getLeaveType()+"'  & $select=username,userId " ),
+        method: 'GET',
+        auth: userP+"@"+clientID+":"+passW
+    };
+
+    makeHTTPRequest( options , 'leaveQuotaBalance' , callback );
+} ;
+```
+
+
+### Sample code to get Sickness leave quota and vacation leave quota for a user cgrant in Successfactors instance.
 
 ```javascript
 connect( "acetxe" , "cgrant" , "demo101" , function ( res ) {
