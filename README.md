@@ -13,11 +13,11 @@
     ...
     ```
     
-    Add node-piper as a dependency in your package.json
+    Add node-sf as a dependency in your package.json
     
     ```json
       "dependencies": {
-        "piper-mgr": "0.1.0"	
+        "sf-mgr" : "0.1.0"	
       },	
     ```
     
@@ -26,80 +26,38 @@
     Create an `index.js` file in myapp directory containing:
     
     ```javascript
-    var piper = require('piper-mgr');
-    var ACCESS_TOKEN = "IQ77NWUPUMNBYEUEKRTWU3VDR5YSLHTA"; // A unique access token to authenticate your request
-    
-    console.log("Managing piper services with the Piper API");
-    
-    var client = {
-        "name": "ACME Company",
-        "handle": "acme",
-        "slackToken": "xoxb-AB0923F-09LSDKFJWOFKLS-LKALIWE099",
-        "adminContact": "Martin Don",
-        "adminEmail": "mdon@acme.com",
-      }
+    connect( "acetxe" , "cgrant" , "demo101" , function ( res ) {
+    var outmsg = '';
+    if ( res.d.results.length > 0 ){
+        outmsg = "Connection to Successfactors was successful...\n";
+        console.log( outmsg );
 
-    piper.registerClient(ACCESS_TOKEN, client, function (err, res) {
-        console.log("Response from Piper for registerClient: ");
-        if (err) console.log("Error: ", err);
-        console.log(JSON.stringify(res, null, " "));
-    });
-    
-    piper.connect(ACCESS_TOKEN, "acme", function (err, res) {
-        console.log("Response from Piper for new connection: ");
-        if (err) console.log("Error: ", err);
-        console.log(JSON.stringify(res, null, " "));
-    });
+        //once successful , perform other api calls like getLeaveQuota , makeLeaveRequest
 
-    piper.disconnect(ACCESS_TOKEN, "acme", function (err, res) {
-        console.log("Response from Piper for end connection: ");
-        if (err) console.log("Error: ", err);
-        console.log(JSON.stringify(res, null, " "));
-    });
-
-    piper.getClient(ACCESS_TOKEN, "acme", function (err, res) {
-        console.log("Response from Piper for retrieve client details: ");
-        if (err) console.log("Error: ", err);
-        console.log(JSON.stringify(res, null, " "));
-    });
-
-    piper.getClients(ACCESS_TOKEN, function (err, res) {
-        console.log("Response from Piper for retrieve all client details: ");
-        if (err) console.log("Error: ", err);
-        console.log(JSON.stringify(res, null, " "));
-    });
-
-    piper.getConnection(ACCESS_TOKEN, "acme", function (err, res) {
-        console.log("Response from Piper for retrieve connection details: ");
-        if (err) console.log("Error: ", err);
-        console.log(JSON.stringify(res, null, " "));
-    });
-
-    piper.getConnections(ACCESS_TOKEN, function (err, res) {
-        console.log("Response from Piper for retrieve all active connections: ");
-        if (err) console.log("Error: ", err);
-        console.log(JSON.stringify(res, null, " "));
-    });
-
-    ```
+    else{
+        outmsg = "Connection Failed!";
+        console.log( outmsg );
+    }
+ ```
 
 4. Start your app
 
 ```bash
 $ node index.js
-Response from Piper for registerClient:
-Client acme successfully registered and activated
 
-Response from Piper for new connection:
+Response from Successfactors for registerClient:
+Connection to Successfactors was successful!
+
+Response from Successfactors for new connection:
 {
  "status": "Connected",
  "client": {
     "_id": "54f1d37614ef3039468cd086",
-    "name": "ACME Company",
-    "slackHandle": "acme",
-    "slackToken": "xoxb-AB0923F-09LSDKFJWOFKLS-LKALIWE099",
-    "adminContact": "Martin Don",
-    "adminEmail": "mdon@acme.com"
+    "name": "acetxe",
+    "sftoken": "xoxb-AB0923F-09LSDKFJWOFKLS-LKALIWE099",
+    "username": "cgrant",
+    "userId": "cgrant1",
+    "email":"cgrant@acetxe.com"
     "isActive": true,
     "__v": 0
   }
@@ -112,134 +70,122 @@ Response from Piper for new connection:
 
 ## API
 
-### registerClient
-
-The `registerClient` function registers a new client and activates a slack connection. The function takes 3 parameters:
-- `access_token`: Your access token for authentication
-- `client`: JSON object with details of the client you want to register
-- `callback(error, response)`: A callback function get 2 arguments:
-    1. An `error` when applicable
-    2. A JSON object containing the Piper response
-    
-```javascript
-var piper = require('piper-mgr');
-var client = {
-    "name": "ACME Company",
-    "handle": "acme",
-    "slackToken": "xoxb-AB0923F-09LSDKFJWOFKLS-LKALIWE099",
-    "adminContact": "Martin Don",
-    "adminEmail": "mdon@acme.com",
-  }
-
-piper.registerClient(ACCESS_TOKEN, client, function (err, res) {
-    console.log("Response from Piper for registerClient: ");
-    if (err) console.log("Error: ", err);
-    console.log(JSON.stringify(res, null, " "));
-});
-```
-
 ### connect
 
-The `connect` function creates a slack connection for a registered client. The function takes 3 arguments:
-- `access_token`: Your access token for your instance
-- `handle`: The unique slack handle of the clients slack instance <slackhandle>.slack.com
-- `callback(error, response)`: A callback function get 2 arguments:
-    1. An `error` when applicable
-    2. A JSON object containing the Piper response
-    
+The `connect` function is used to connect to the Successfactor instance. It takes 4 arguments:
+- `ClientId`: Name of Successfactors company e.g acetxe
+- `username`: Username on Successfactors e.g cgrant
+- `password`: Password on Successfactors e.g demo101
+- `callback`: call function that takes http response as its arguments.
+
 ```javascript
-var piper = require('piper-mgr');
-piper.connect(ACCESS_TOKEN, "acme", function (err, res) {
-    console.log("Response from Piper for new connection: ");
-    if (err) console.log("Error: ", err);
-    console.log(JSON.stringify(res, null, " "));
-});
+var connect = function( clientID , userP , passW , callback){
+      var options = {
+      hostname: hostname,
+      path: encodeURI ( "/odata/v2/User?$format=json&$filter=userId eq '"+userP+"1' & $select=username,userId" ),
+      method: 'GET',
+      auth: userP+"@"+clientID+":"+passW
+
+    };
+    
+    makeHTTPRequest( options , 'connect', callback );
+};
 ```
 
-### disconnect
+### setLeaveUser
 
-The `disconnect` function ends an active connection. The function takes 3 arguments:
-- `access_token`: Your access token for your instance
-- `handle`: The unique slack handle of the clients slack instance <slackhandle>.slack.com
-- `callback(error, response)`: A callback function get 2 arguments:
-    1. An `error` when applicable
-    2. A JSON object containing the Piper response
-    
+The `setLeaveUser` function is used to set current user for leave information. It takes 1 argument: 
+- `leaveUser`: UserId for user in Successfactors
+
 ```javascript
-var piper = require('piper-mgr');
-piper.disconnect(ACCESS_TOKEN, "acme", function (err, res) {
-    console.log("Response from Piper for end connection: ");
-    if (err) console.log("Error: ", err);
-    console.log(JSON.stringify(res, null, " "));
-});
+var setLeaveUser = function ( user ){
+  leaveUser = user;
+}
 ```
 
-### getClient
+### setLeaveType
 
-The `getClient` function retrieves the details of a registered client. The function takes 3 arguments:
-- `access_token`: Your access token for your instance
-- `handle`: The unique slack handle of the clients slack instance <slackhandle>.slack.com
-- `callback(error, response)`: A callback function get 2 arguments:
-    1. An `error` when applicable
-    2. A JSON object containing the Piper response
-    
+The `setLeaveType` function is used to set current timeAccountType to be fetched for the user. It takes 1 argument: 
+- `leaveType`: external code for timeAccountType. It is usually any of this VACATION_CURRENT , SICKNESS_CURRENT , PTO_CURRENT , PTO_AC
+
 ```javascript
-var piper = require('piper-mgr');
-piper.getClient(ACCESS_TOKEN, "acme", function (err, res) {
-    console.log("Response from Piper for retrieve client details: ");
-    if (err) console.log("Error: ", err);
-    console.log(JSON.stringify(res, null, " "));
-});
+var setLeaveType = function( leaveType ){
+  timeAccountType = leaveType;
+}
 ```
 
-### getClients
+### getLeaveQuota
 
-The `getClients` function retrieves an array of all registered clients. The function takes 2 arguments:
-- `access_token`: Your access token for your instance
-- `callback(error, response)`: A callback function get 2 arguments:
-    1. An `error` when applicable
-    2. A JSON object containing the Piper response
-    
+The `getLeaveQuota` function is used to fetch the leave balance for a user and a particular leave type. It takes 4 arguments:
+- `ClientId`: Name of Successfactors company e.g acetxe
+- `userId`: UserId on Successfactors e.g cgrant1
+- `password`: Password on Successfactors e.g demo101
+- `callback`: call function that takes http response as its arguments
+
 ```javascript
-var piper = require('piper-mgr');
-piper.getClients(ACCESS_TOKEN, function (err, res) {
-    console.log("Response from Piper for retrieve all client details: ");
-    if (err) console.log("Error: ", err);
-    console.log(JSON.stringify(res, null, " "));
-});
+var getLeaveQuota = function (clientID, userP, passW , callback ) {
+    
+    var options = {
+        hostname: hostname,
+        path: encodeURI ( "/odata/v2/EmpTimeAccountBalance?$format=json&$filter=userId eq '"+getLeaveUser()+
+          "'  and timeAccountType eq '"+getLeaveType()+"'  & $select=username,userId " ),
+        method: 'GET',
+        auth: userP+"@"+clientID+":"+passW
+    };
+
+    makeHTTPRequest( options , 'leaveQuotaBalance' , callback );
+} ;
 ```
 
-### getConnection
 
-The `getConnection` function retrieves the details of an active connection for a registered client. The function takes 3 arguments:
-- `access_token`: Your access token for your instance
-- `handle`: The unique slack handle of the clients slack instance <slackhandle>.slack.com
-- `callback(error, response)`: A callback function get 2 arguments:
-    1. An `error` when applicable
-    2. A JSON object containing the Piper response
-    
+### Sample code to get Sickness leave quota and vacation leave quota for a user cgrant in Successfactors instance.
+
 ```javascript
-var piper = require('piper-mgr');
-piper.getConnect(ACCESS_TOKEN, "acme", function (err, res) {
-    console.log("Response from Piper for retrieve connection details: ");
-    if (err) console.log("Error: ", err);
-    console.log(JSON.stringify(res, null, " "));
-});
-```
+connect( "acetxe" , "cgrant" , "demo101" , function ( res ) {
+   var outmsg = '';
+   if ( res.d.results.length > 0 ){
+      outmsg = "Connection to Successfactors was successful...\n";
+      console.log( outmsg );
+      //Getting leave quota from Successfactors
+      setLeaveUser( 'cgrant1' );
+      setLeaveType ( 'SICKNESS_CURRENT' );
+      getLeaveQuota( "acetxe" , "cgrant" , "demo101" , function ( res ) {
 
-### getConnections
+         if ( res.d.results.length > 0 ){
+             for ( a = 0 ; a<res.d.results.length;a++){
+                  leaveQuotaBalance = res.d.results[a];
+                  console.log ( "Leave Balance for "+mapLeaveType( leaveQuotaBalance.timeAccountType )+" for Successfactor user with id  "+leaveQuotaBalance.userId
+              +" is "+leaveQuotaBalance.balance);
+            
+             }
+        }else{
+          res = "Query returned empty set!";
+          console.log( res );
+        }
 
-The `getConnections` function retrieves an array of all registered connections. The function takes 2 arguments:
-- `access_token`: Your access token for your instance
-- `callback(error, response)`: A callback function get 2 arguments:
-    1. An `error` when applicable
-    2. A JSON object containing the Piper response
-    
-```javascript
-var piper = require('piper-mgr');
-piper.getConnections(ACCESS_TOKEN, function (err, res) {
-    console.log("Response from Piper for retrieve all active connections: ");
-    if (err) console.log("Error: ", err);
-    console.log(JSON.stringify(res, null, " "));
+      });
+
+      setLeaveType ( 'VACATION_CURRENT' );
+      getLeaveQuota( "acetxe" , "admin" , "demo101" , function ( res ) {
+
+         if ( res.d.results.length > 0 ){
+             for ( a = 0 ; a<res.d.results.length;a++){
+                  leaveQuotaBalance = res.d.results[a];
+                   console.log ( "Leave Balance for "+mapLeaveType( leaveQuotaBalance.timeAccountType )+" for Successfactor user with id  "+leaveQuotaBalance.userId
+              +" is "+leaveQuotaBalance.balance);
+            
+             }
+        }else{
+          res = "Query returned empty set for user "+getLeaveUser()+"!";
+          console.log( res );
+        }
+      });
+
+
+  }else{
+      outmsg = "Connection Failed!";
+      console.log( outmsg );
+  }
+ 
 });
 ```
